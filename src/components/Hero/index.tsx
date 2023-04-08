@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
-import useEventListener from '@use-it/event-listener';
-import { HEAD_OFFSET, TILE_SIZE } from '../../settings/constants';
+import React, { useState } from "react";
+import useEventListener from "@use-it/event-listener";
+import { EDirection, HEAD_OFFSET, TILE_SIZE } from "../../settings/constants";
 
-import './index.css';
+import "./index.css";
+import useHeroMovement from "../../hooks/useHeroMovement";
 
 const initialPosition = {
   x: 2,
@@ -10,55 +11,22 @@ const initialPosition = {
 };
 
 export function Hero() {
-  const [heroPositionState, setHeroPositionState] = useState(initialPosition);
-  const [direction, setDirection] = useState('RIGHT');
-
-  useEventListener('keydown', (event: any) => {
-    switch (true) {
-      case event.key === 'ArrowUp':
-        setHeroPositionState({
-          x: heroPositionState.x,
-          y: heroPositionState.y + 1,
-        });
-        break;
-      case event.key === 'ArrowDown':
-        setHeroPositionState({
-          x: heroPositionState.x,
-          y: heroPositionState.y - 1,
-        });
-        break;
-      case event.key === 'ArrowLeft':
-        setHeroPositionState({
-          x: heroPositionState.x - 1,
-          y: heroPositionState.y,
-        });
-        setDirection('LEFT');
-        break;
-      case event.key === 'ArrowRight':
-        setHeroPositionState({
-          x: heroPositionState.x + 1,
-          y: heroPositionState.y,
-        });
-        setDirection('RIGHT');
-        break;
-      default:
-        break;
-    }
-  });
+  const { position, direction } = useHeroMovement(initialPosition);
 
   return (
     <div
       style={{
-        position: 'absolute',
-        bottom: TILE_SIZE * heroPositionState.y,
-        left: TILE_SIZE * heroPositionState.x,
+        position: "absolute",
+        bottom: TILE_SIZE * position.y,
+        left: TILE_SIZE * position.x,
         width: TILE_SIZE,
         height: TILE_SIZE + HEAD_OFFSET,
-        backgroundImage: 'url(./assets/HERO.png)',
-        backgroundRepeat: 'no-repeat',
+        backgroundImage: "url(./assets/HERO.png)",
+        backgroundRepeat: "no-repeat",
         backgroundPosition: `0px -${TILE_SIZE - HEAD_OFFSET}px`,
-        animation: 'hero-animation 1s steps(4) infinite',
-        transform: `scaleX(${direction === 'RIGHT' ? 1 : -1})`,
+        animation: "hero-animation 1s steps(4) infinite",
+        transform: `scaleX(${direction === EDirection.RIGHT ? 1 : -1})`,
+        zIndex: 1,
       }}
     />
   );
